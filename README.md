@@ -7,14 +7,24 @@ The development of this client was kindly supported by [Hemro International AG](
 This module is an official product and the development happens independently. API breaking may happen at
 any given time.
 
-## Installation
-
-The package is available in the [Python Package Index](https://pypi.org/project/audiness/).
-
 ## Setup
 
 It's required to set up your user upfront using the API client. Use the admin
 interface or mobile app to register yourself.
+
+## Installation
+
+Clone the repository:
+
+```bash
+$ git clone https://github.com/audius/mahlkoenig
+```
+
+Install the module:
+
+```bash
+$ poetry install
+```
 
 ## Usage
 
