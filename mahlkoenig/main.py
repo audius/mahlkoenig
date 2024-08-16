@@ -1,22 +1,31 @@
 """Main part of the Mahlkönig API client."""
+
 import typer
 from typing_extensions import Annotated
-from validators import url, email
+from validators import email, url
 
-from mahlkoenig.commands import info, company, user, regions, users, stores, region, store
+from mahlkoenig.commands import (
+    company,
+    info,
+    region,
+    regions,
+    store,
+    stores,
+    user,
+    users,
+)
 from mahlkoenig.helpers import setup_connection
 
 app = typer.Typer()
 
-app.add_typer(info.app, name="info")
 app.add_typer(company.app, name="company")
-app.add_typer(user.app, name="user")
+app.add_typer(info.app, name="info")
 app.add_typer(region.app, name="region")
-app.add_typer(users.app, name="users")
 app.add_typer(regions.app, name="regions")
 app.add_typer(store.app, name="store")
 app.add_typer(stores.app, name="stores")
-
+app.add_typer(user.app, name="user")
+app.add_typer(users.app, name="users")
 
 
 def validate_url(value: str):
@@ -31,6 +40,7 @@ def validate_username(value: str):
     if email(str(value)):
         raise typer.BadParameter("User's name is not an e-mail address")
     return value
+
 
 # def validate_token(value: str):
 #     """Check the token's name."""
@@ -48,7 +58,7 @@ def main(
             envvar="USER_NAME",
             help="User name for the Mahlkönig interface",
             prompt=True,
-            #callback=validate_username,
+            # callback=validate_username,
         ),
     ],
     password: Annotated[
@@ -69,11 +79,12 @@ def main(
     #     ),
     # ],
     url: Annotated[
-        str, typer.Option(
+        str,
+        typer.Option(
             envvar="URL",
             help="URL to Mahlkönig API",
             prompt=True,
-            #callback=validate_url,
+            # callback=validate_url,
         ),
     ],
 ):
