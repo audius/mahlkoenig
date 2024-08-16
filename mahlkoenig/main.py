@@ -88,9 +88,9 @@ def main(
         ),
     ],
 ):
-    api_client, details = setup_connection(url, user_name, password)
+    api_client, details, auth_data = setup_connection(url, user_name, password)
 
-    ctx.obj = {"api_client": api_client, "details": details, "username": user_name}
+    ctx.obj = {"api_client": api_client, "details": details, "username": user_name, "auth_data": auth_data}
 
 
 if __name__ == "__main__":

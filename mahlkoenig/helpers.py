@@ -17,6 +17,7 @@ class AuthAPIClient:
         self.password = password
         self.timeout = timeout
         self.token = None
+        self.auth_data = None
 
     def authenticate(self):
         """Authenticate user with username and password."""
@@ -32,6 +33,7 @@ class AuthAPIClient:
                 response.raise_for_status()
                 self.token = response.json().get("access_token")
                 # print("Authentication successful")
+                return response.json()
             except httpx.HTTPStatusError as error:
                 print(
                     f"Authentication failed: {error.response.status_code} - {error.response.text}"
@@ -80,11 +82,11 @@ def setup_connection(url: str, username: str, password: str):
     )
 
     # This is a hack to eliminate the need to refresh the token
-    api_client.authenticate()
+    auth_data = api_client.authenticate()
 
     user_details = api_client.get("/api/security-service/auth/account")
 
-    return (api_client, user_details)
+    return (api_client, user_details, auth_data)
 
 
 def human_readable_datetime(data, *args):
