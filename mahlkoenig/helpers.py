@@ -1,83 +1,90 @@
-"""Helper elements for various tasks."""
+"""Helper parts for various tasks."""
 
 from datetime import datetime
 
 import httpx
 
 
-class APIClient:
-    """Basic client to interact with the Mahlkönig API."""
+class AuthAPIClient:
+    """Representation of an API client for the Mahlkönig API."""
 
-    def __init__(self, base_url: str, headers: dict = None, timeout: float = 10.0):
+    def __init__(
+        self, base_url: str, username: str, password: str, timeout: float = 5.0
+    ):
         """Initialize the API client."""
         self.base_url = base_url
+        self.username = username
+        self.password = password
         self.timeout = timeout
-        self.headers = headers
+        self.token = None
 
-    def get(self, endpoint: str, headers: dict = None, params: dict = None):
-        """Execute a GET request."""
-        with httpx.Client(
-            base_url=self.base_url, headers=self.headers, timeout=self.timeout
-        ) as client:
-            try:
-                response = client.get(endpoint, params=params)
-                response.raise_for_status()
-                return response.json()
-            except httpx.HTTPStatusError as error:
-                print(f"Error: {error.response.status_code} - {error.response.text}")
-                return None
-            except httpx.RequestError as error:
-                print(f"An error occurred while requesting {error.request.url!r}.")
-                return None
-
-    def post(
-        self, endpoint: str, headers: dict = None, data: dict = None, json: dict = None
-    ):
-        """Execute a POST request."""
-        with httpx.Client(
-            base_url=self.base_url, headers=self.headers, timeout=self.timeout
-        ) as client:
-            try:
-                response = client.post(endpoint, data=data, json=json)
-                response.raise_for_status()
-                return response.json()
-            except httpx.HTTPStatusError as error:
-                print(f"Error: {error.response.status_code} - {error.response.text}")
-                return None
-            except httpx.RequestError as error:
-                print(f"An error occurred while requesting {error.request.url!r}.")
-                return None
-
-
-def setup_connection(url, username, password):
-    """Connect to the Mahlkönig API."""
-
-    authentication = APIClient(base_url=url)
-
-    data = {
-        "grant_type": "password",
-        "username": username,
-        "password": password,
-    }
-    headers = {}
-    token_response = authentication.post("/api/security-service/oauth/token", data=data)
-
-    try:
-        scope = token_response["scope"]
-        details = token_response["details"]
-        username = token_response["username"]
-        bearer_token = token_response["access_token"]
-
-        headers = {
-            "Authorization": f"Bearer {bearer_token}",
-            "Accept": "application/json",
+    def authenticate(self):
+        """Authenticate user with username and password."""
+        auth_endpoint = "/api/security-service/auth/token"
+        data = {
+            "username": self.username,
+            "password": self.password,
+            "grant_type": "password",
         }
+        with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+            try:
+                response = client.post(auth_endpoint, json=data)
+                response.raise_for_status()
+                self.token = response.json().get("access_token")
+                # print("Authentication successful")
+            except httpx.HTTPStatusError as error:
+                print(
+                    f"Authentication failed: {error.response.status_code} - {error.response.text}"
+                )
+            except httpx.RequestError as error:
+                print(f"An error occurred while requesting {error.request.url!r}.")
 
-        api_client = APIClient(base_url=url, headers=headers)
+    def get_headers(self):
+        """Get the Bearer token for authentication."""
+        if not self.token:
+            raise ValueError("No token found. Please authenticate first")
+        return {"Authorization": f"Bearer {self.token}"}
 
-        return (api_client, details, scope, username)
-    except TypeError:
-        raise ("Unable to connect to API")
+    def get(self, endpoint: str, params: dict = None):
+        """Execute a GET request."""
+        headers = self.get_headers()
+        with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+            try:
+                response = client.get(endpoint, headers=headers, params=params)
+                response.raise_for_status()
+                return response.json()
+            except httpx.HTTPStatusError as error:
+                print(f"Error: {error.response.status_code} - {error.response.text}")
+                return None
+
+    def post(self, endpoint: str, data: dict = None, json: dict = None):
+        """Execute a POST request."""
+        headers = self.get_headers()
+        with httpx.Client(base_url=self.base_url, timeout=self.timeout) as client:
+            try:
+                response = client.post(endpoint, headers=headers, data=data, json=json)
+                response.raise_for_status()
+                return response.json()
+            except httpx.HTTPStatusError as error:
+                print(f"Error: {error.response.status_code} - {error.response.text}")
+                return None
+            except httpx.RequestError as error:
+                print(f"An error occurred while requesting {error.request.url!r}.")
+                return None
+
+
+def setup_connection(url: str, username: str, password: str):
+    """Connect to the Mahlkönig API."""
+    api_client = AuthAPIClient(
+        base_url="https://syncqa.mahlkoenig.com", username=username, password=password
+    )
+
+    # This is a hack to eliminate the need to refresh the token
+    api_client.authenticate()
+
+    user_details = api_client.get("/api/security-service/auth/account")
+
+    return (api_client, user_details)
 
 
 def human_readable_datetime(data, *args):
