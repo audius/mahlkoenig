@@ -1,12 +1,13 @@
 """Interact with region data of the Mahlkönig API."""
-import typer
 
+import typer
 from rich import print_json
 from rich.console import Console
 from rich.table import Table
 
 console = Console()
 app = typer.Typer()
+
 
 @app.command()
 def short(ctx: typer.Context):
@@ -24,7 +25,7 @@ def short(ctx: typer.Context):
         "pager": {
             "firstResult": 0,
             "pageSize": 25,
-        }
+        },
     }
 
     regions = api_client.post("/api/admin-service/region/query", json=payload)
@@ -46,6 +47,7 @@ def short(ctx: typer.Context):
 
     console.print(table)
 
+
 @app.command()
 def full(ctx: typer.Context):
     """List the regions."""
@@ -65,7 +67,7 @@ def full(ctx: typer.Context):
         "pager": {
             "firstResult": 0,
             "pageSize": 25,
-        }
+        },
     }
 
     regions = api_client.post("/api/admin-service/region/query", json=payload)
