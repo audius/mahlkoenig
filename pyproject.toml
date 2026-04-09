@@ -10,7 +10,7 @@ homepage = "https://github.com/audius/mahlkoenig"
 repository = "https://github.com/audius/mahlkoenig"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.13"
 typer = {extras = ["all"], version = "^0.24"}
 validators = "^0.35"
 httpx = "^0.28.0"
