@@ -18,7 +18,6 @@ typing-extensions = "^4.12.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^9"
-black = "^25.12"
 isort = "^5.13"
 
 [tool.poetry.scripts]
