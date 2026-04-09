@@ -4,7 +4,7 @@ Helper scripts to interact with the Mahlkönig API. The CLI allows one to perfor
 without using the web interface.
 
 The development of this client was kindly supported by [Hemro International AG](https://www.mahlkoenig.com).
-This module is an official product and the development happens independently. API breaking may happen at
+This module is not an official product and the development happens independently. API breaking may happen at
 any given time.
 
 ## Setup
