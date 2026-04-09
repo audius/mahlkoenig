@@ -4,16 +4,8 @@ import typer
 from typing_extensions import Annotated
 from validators import email, url
 
-from mahlkoenig.commands import (
-    company,
-    info,
-    region,
-    regions,
-    store,
-    stores,
-    user,
-    users,
-)
+from mahlkoenig.commands import (company, info, region, regions, store, stores,
+                                 user, users)
 from mahlkoenig.helpers import setup_connection
 
 app = typer.Typer()
@@ -90,7 +82,12 @@ def main(
 ):
     api_client, details, auth_data = setup_connection(url, user_name, password)
 
-    ctx.obj = {"api_client": api_client, "details": details, "username": user_name, "auth_data": auth_data}
+    ctx.obj = {
+        "api_client": api_client,
+        "details": details,
+        "username": user_name,
+        "auth_data": auth_data,
+    }
 
 
 if __name__ == "__main__":
