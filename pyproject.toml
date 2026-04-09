@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mahlkoenig"
-version = "0.1.0"
+version = "0.2.0"
 description = "CLI tool to interact with the Mahlkönig API"
 authors = ["Fabian Affolter <fabian-affolter@audius.de>"]
 readme = "README.md"
