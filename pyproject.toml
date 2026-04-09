@@ -11,10 +11,11 @@ repository = "https://github.com/audius/mahlkoenig"
 
 [tool.poetry.dependencies]
 python = "^3.13"
-typer = {extras = ["all"], version = "^0.24"}
-validators = "^0.35"
 httpx = "^0.28.0"
+rich = "^14.0.0"
+typer = {extras = ["all"], version = "^0.24"}
 typing-extensions = "^4.12.2"
+validators = "^0.35"
 
 [tool.poetry.dev-dependencies]
 pytest = "^9"
